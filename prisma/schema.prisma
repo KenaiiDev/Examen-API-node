@@ -1,0 +1,69 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  username  String    @unique
+  email     String    @unique
+  password  String
+  reviews   Review[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+}
+
+model Game {
+  id           String     @id @default(auto()) @map("_id") @db.ObjectId
+  title        String
+  developer    String
+  releaseDate  DateTime
+  reviews      Review[]
+  genresIds    String[]   @db.ObjectId
+  genres       Genre[]    @relation(fields: [genresIds], references: [id])
+  platformsIds String[]   @db.ObjectId
+  platforms    Platform[] @relation(fields: [platformsIds], references: [id])
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  deletedAt    DateTime?
+}
+
+model Genre {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  gameIds   String[]  @db.ObjectId
+  games     Game[]    @relation(fields: [gameIds], references: [id])
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+}
+
+model Review {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  rating    Int
+  content   String?
+  gameId    String    @db.ObjectId
+  game      Game      @relation(fields: [gameId], references: [id])
+  author    User      @relation(fields: [authorId], references: [id])
+  authorId  String    @db.ObjectId
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+}
+
+model Platform {
+  id           String    @id @default(auto()) @map("_id") @db.ObjectId
+  name         String
+  manufacturer String
+  releaseDate  DateTime
+  gameIds      String[]  @db.ObjectId
+  games        Game[]    @relation(fields: [gameIds], references: [id])
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  deletedAt    DateTime?
+}
