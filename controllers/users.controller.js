@@ -1,6 +1,7 @@
 import httpStatus from "../helpers/httpStatus.js";
-import prisma from "../database/prisma.js";
+import { prismaClientSoftDelete as prisma } from "../database/prisma.js";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 export const usersController = () => {
   const createUser = async (req, res, next) => {
@@ -28,8 +29,25 @@ export const usersController = () => {
     }
   };
 
-  const deleteUser = (req, res, next) => {
-    return res.status(httpStatus.OK).json({ message: "Delete User" });
+  const deleteUser = async (req, res, next) => {
+    const { id } = req.params;
+    try {
+      const deletedUser = await prisma.user.delete({
+        where: {
+          id: id,
+        },
+      });
+
+      res.status(httpStatus.OK).json({
+        success: true,
+        message: "User deleted successfully",
+        data: deletedUser,
+      });
+    } catch (error) {
+      next(error);
+    } finally {
+      await prisma.$disconnect();
+    }
   };
 
   const getUsers = async (req, res, next) => {
@@ -46,12 +64,54 @@ export const usersController = () => {
       await prisma.$disconnect();
     }
   };
-  const getUserById = (req, res, next) => {
-    return res.status(httpStatus.OK).json({ message: "Get user by id" });
+
+  const getUserById = async (req, res, next) => {
+    try {
+      const user = await prisma.user.findUnique({
+        where: {
+          id: req.params.id,
+        },
+      });
+      res.status(httpStatus.OK).json({
+        success: true,
+        message: "Get user by id",
+        data: user,
+      });
+    } catch (error) {
+      next(error);
+    } finally {
+      await prisma.$disconnect();
+    }
   };
 
-  const updateUser = (req, res, next) => {
-    return res.status(httpStatus.OK).json({ message: "Update user" });
+  const updateUser = async (req, res, next) => {
+    try {
+      const { username, email, password } = req.body;
+      const { id } = req.params;
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
+
+      const user = await prisma.user.update({
+        where: {
+          id: id,
+        },
+        data: {
+          username,
+          email,
+          password: hashedPassword,
+        },
+      });
+
+      res.status(httpStatus.OK).json({
+        success: true,
+        message: "User updated successfully",
+        data: user,
+      });
+    } catch (error) {
+      next(error);
+    } finally {
+      await prisma.$disconnect();
+    }
   };
 
   return {
