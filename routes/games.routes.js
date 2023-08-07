@@ -10,8 +10,16 @@ import { auth } from "../middlewares/auth.js";
 
 export const gamesRoutes = () => {
   const gamesRouter = Router();
-  const { createGame, getGames, getGameById, updateGame, deleteGame } =
-    gamesController();
+  const {
+    createGame,
+    getGames,
+    getGameById,
+    updateGame,
+    deleteGame,
+    getGameByPlatformOrGenre,
+  } = gamesController();
+
+  gamesRouter.route("/games/search").get(getGameByPlatformOrGenre);
 
   gamesRouter
     .route("/games")

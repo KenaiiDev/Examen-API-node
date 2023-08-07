@@ -45,7 +45,7 @@ export const gamesController = () => {
 
       return res.status(httpStatus.CREATED).json({
         success: true,
-        message: "prueba",
+        message: "Game created successfully",
         data: game,
       });
     } catch (error) {
@@ -84,6 +84,7 @@ export const gamesController = () => {
   };
 
   const getGameById = async (req, res, next) => {
+    console.log("a");
     try {
       const { id } = req.params;
       const games = await prisma.game.findMany({
@@ -103,6 +104,75 @@ export const gamesController = () => {
           },
         },
       });
+      return res.status(httpStatus.OK).json({
+        success: true,
+        message: "Get games",
+        data: games,
+      });
+    } catch (error) {
+      next(error);
+    } finally {
+      await prisma.$disconnect();
+    }
+  };
+
+  const getGameByPlatformOrGenre = async (req, res, next) => {
+    try {
+      const { platform, genre } = req.body;
+      /*
+      const platformId = !platform
+        ? null
+        : await prisma.platform.findUnique({
+            where: {
+              name: platform,
+            },
+            select: {
+              id: true,
+            },
+          });
+      const genreId = !genre
+        ? null
+        : await prisma.genre.findUnique({
+            where: {
+              name: genre,
+            },
+            select: {
+              id: true,
+            },
+          });
+*/
+      const games = await prisma.game.findMany({
+        select: {
+          id: true,
+          title: true,
+          developer: true,
+          price: true,
+          releaseDate: true,
+          genres: {
+            select: {
+              name: true,
+            },
+          },
+          platforms: {
+            select: {
+              name: true,
+            },
+          },
+        },
+        where: {
+          genres: {
+            some: {
+              name: genre,
+            },
+          },
+          platforms: {
+            some: {
+              name: platform,
+            },
+          },
+        },
+      });
+
       return res.status(httpStatus.OK).json({
         success: true,
         message: "Get games",
@@ -199,5 +269,6 @@ export const gamesController = () => {
     getGameById,
     updateGame,
     deleteGame,
+    getGameByPlatformOrGenre,
   };
 };
