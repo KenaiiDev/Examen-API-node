@@ -16,10 +16,13 @@ export const gamesRoutes = () => {
     getGameById,
     updateGame,
     deleteGame,
+    getGameByQuery,
     getGameByPlatformOrGenre,
   } = gamesController();
 
-  gamesRouter.route("/games/search").get(getGameByPlatformOrGenre);
+  gamesRouter.route("/games/filter").get(getGameByPlatformOrGenre);
+
+  gamesRouter.route("/games/search").get(getGameByQuery);
 
   gamesRouter
     .route("/games")

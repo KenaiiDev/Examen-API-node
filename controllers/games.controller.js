@@ -58,7 +58,12 @@ export const gamesController = () => {
   const getGames = async (req, res, next) => {
     try {
       const games = await prisma.game.findMany({
-        include: {
+        select: {
+          id: true,
+          title: true,
+          developer: true,
+          price: true,
+          releaseDate: true,
           genres: {
             select: {
               name: true,
@@ -67,6 +72,18 @@ export const gamesController = () => {
           platforms: {
             select: {
               name: true,
+            },
+          },
+          reviews: {
+            select: {
+              id: true,
+              rating: true,
+              content: true,
+              author: {
+                select: {
+                  username: true,
+                },
+              },
             },
           },
         },
@@ -84,14 +101,18 @@ export const gamesController = () => {
   };
 
   const getGameById = async (req, res, next) => {
-    console.log("a");
     try {
       const { id } = req.params;
       const games = await prisma.game.findMany({
         where: {
           id: id,
         },
-        include: {
+        select: {
+          id: true,
+          title: true,
+          developer: true,
+          price: true,
+          releaseDate: true,
           genres: {
             select: {
               name: true,
@@ -100,6 +121,18 @@ export const gamesController = () => {
           platforms: {
             select: {
               name: true,
+            },
+          },
+          reviews: {
+            select: {
+              id: true,
+              rating: true,
+              content: true,
+              author: {
+                select: {
+                  username: true,
+                },
+              },
             },
           },
         },
@@ -119,28 +152,7 @@ export const gamesController = () => {
   const getGameByPlatformOrGenre = async (req, res, next) => {
     try {
       const { platform, genre } = req.body;
-      /*
-      const platformId = !platform
-        ? null
-        : await prisma.platform.findUnique({
-            where: {
-              name: platform,
-            },
-            select: {
-              id: true,
-            },
-          });
-      const genreId = !genre
-        ? null
-        : await prisma.genre.findUnique({
-            where: {
-              name: genre,
-            },
-            select: {
-              id: true,
-            },
-          });
-*/
+
       const games = await prisma.game.findMany({
         select: {
           id: true,
@@ -156,6 +168,18 @@ export const gamesController = () => {
           platforms: {
             select: {
               name: true,
+            },
+          },
+          reviews: {
+            select: {
+              id: true,
+              rating: true,
+              content: true,
+              author: {
+                select: {
+                  username: true,
+                },
+              },
             },
           },
         },
@@ -174,6 +198,58 @@ export const gamesController = () => {
       });
 
       return res.status(httpStatus.OK).json({
+        success: true,
+        message: "Get games",
+        data: games,
+      });
+    } catch (error) {
+      next(error);
+    } finally {
+      await prisma.$disconnect();
+    }
+  };
+
+  const getGameByQuery = async (req, res, next) => {
+    try {
+      const { query } = req.body;
+      const games = await prisma.game.findMany({
+        where: {
+          title: {
+            contains: query,
+          },
+        },
+        select: {
+          id: true,
+          title: true,
+          developer: true,
+          price: true,
+          releaseDate: true,
+          genres: {
+            select: {
+              name: true,
+            },
+          },
+          platforms: {
+            select: {
+              name: true,
+            },
+          },
+          reviews: {
+            select: {
+              id: true,
+              rating: true,
+              content: true,
+              author: {
+                select: {
+                  username: true,
+                },
+              },
+            },
+          },
+        },
+      });
+
+      res.status(httpStatus.OK).json({
         success: true,
         message: "Get games",
         data: games,
@@ -270,5 +346,6 @@ export const gamesController = () => {
     updateGame,
     deleteGame,
     getGameByPlatformOrGenre,
+    getGameByQuery,
   };
 };
