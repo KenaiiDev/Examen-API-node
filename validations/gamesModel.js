@@ -9,7 +9,6 @@ export const gamesCreateSchema = Joi.object({
   platforms: Joi.array().items(Joi.string()).required(),
 });
 
-
 export const gamesUpdateSchema = Joi.object({
   title: Joi.string(),
   developer: Joi.string(),
@@ -17,4 +16,4 @@ export const gamesUpdateSchema = Joi.object({
   releaseDate: Joi.date(),
   genres: Joi.array().items(Joi.string()),
   platforms: Joi.array().items(Joi.string()),
-})
+});

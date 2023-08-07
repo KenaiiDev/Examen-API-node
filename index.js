@@ -8,6 +8,7 @@ import { authRoutes } from "./routes/auth.routes.js";
 import { gamesRoutes } from "./routes/games.routes.js";
 import { genresRoutes } from "./routes/genres.routes.js";
 import { platformsRoutes } from "./routes/platforms.routes.js";
+import { reviewsRoutes } from "./routes/reviews.routes.js";
 import errorHandler from "./middlewares/errorHandler.js";
 
 dotenv.config();
@@ -33,7 +34,8 @@ app.use(
   authRoutes(),
   gamesRoutes(),
   genresRoutes(),
-  platformsRoutes()
+  platformsRoutes(),
+  reviewsRoutes()
 );
 
 app.use(errorHandler);

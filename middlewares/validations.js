@@ -18,7 +18,11 @@ import {
 import {
   gamesCreateSchema,
   gamesUpdateSchema,
-} from "../validations/gamesValidation.js";
+} from "../validations/gamesModel.js";
+import {
+  reviewCreateSchema,
+  reviewUpdateSchema,
+} from "../validations/reviewsModel.js";
 
 export const userCreateValidation = (req, res, next) => {
   const data = req.body;
@@ -97,6 +101,20 @@ export const gamesCreateValidation = (req, _res, next) => {
 export const gamesUpdateValidation = (req, _res, next) => {
   const data = req.body;
   const { error } = gamesUpdateSchema.validate(data);
+
+  error ? next(error) : next();
+};
+
+export const reviewCreateValidation = (req, _res, next) => {
+  const data = req.body;
+  const { error } = reviewCreateSchema.validate(data);
+
+  error ? next(error) : next();
+};
+
+export const reviewUpdateValidation = (req, _res, next) => {
+  const data = req.body;
+  const { error } = reviewUpdateSchema.validate(data);
 
   error ? next(error) : next();
 };
