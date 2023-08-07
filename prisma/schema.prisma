@@ -24,6 +24,7 @@ model Game {
   id           String     @id @default(auto()) @map("_id") @db.ObjectId
   title        String
   developer    String
+  price        Float
   releaseDate  DateTime
   reviews      Review[]
   genresIds    String[]   @db.ObjectId
@@ -37,7 +38,7 @@ model Game {
 
 model Genre {
   id        String    @id @default(auto()) @map("_id") @db.ObjectId
-  name      String
+  name      String    @unique
   gameIds   String[]  @db.ObjectId
   games     Game[]    @relation(fields: [gameIds], references: [id])
   createdAt DateTime  @default(now())
@@ -60,9 +61,9 @@ model Review {
 
 model Platform {
   id           String    @id @default(auto()) @map("_id") @db.ObjectId
-  name         String
-  manufacturer String
-  releaseDate  DateTime
+  name         String    @unique
+  manufacturer String?
+  releaseDate  DateTime? @db.Date
   gameIds      String[]  @db.ObjectId
   games        Game[]    @relation(fields: [gameIds], references: [id])
   createdAt    DateTime  @default(now())

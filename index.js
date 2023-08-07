@@ -5,6 +5,9 @@ import { expressjwt as jwt } from "express-jwt";
 
 import { usersRoutes } from "./routes/users.routes.js";
 import { authRoutes } from "./routes/auth.routes.js";
+import { gamesRoutes } from "./routes/games.routes.js";
+import { genresRoutes } from "./routes/genres.routes.js";
+import { platformsRoutes } from "./routes/platforms.routes.js";
 import errorHandler from "./middlewares/errorHandler.js";
 
 dotenv.config();
@@ -24,7 +27,14 @@ app.use(
   })
 );
 
-app.use("/api", usersRoutes(), authRoutes());
+app.use(
+  "/api",
+  usersRoutes(),
+  authRoutes(),
+  gamesRoutes(),
+  genresRoutes(),
+  platformsRoutes()
+);
 
 app.use(errorHandler);
 

@@ -3,6 +3,7 @@ import ROLES from "../helpers/roles.js";
 import httpStatus from "../helpers/httpStatus.js";
 
 export const auth = async (req, res, next) => {
+  console.log("auth");
   const { authorization } = req.headers;
   const token = authorization.split(" ")[1];
 
