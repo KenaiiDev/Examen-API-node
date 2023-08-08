@@ -43,7 +43,6 @@ export const prismaClientSoftDelete = prisma.$extends({
           ...args.where,
           deletedAt: null,
         };
-        console.log(`args: ${args}`);
         return prisma[model].findUnique(args);
       },
 

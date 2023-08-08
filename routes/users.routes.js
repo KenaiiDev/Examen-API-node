@@ -19,7 +19,7 @@ export const usersRoutes = () => {
 
   usersRouter
     .route("/users/:id")
-    .get(getUserById)
+    .get(auth, getUserById)
     .put(userUpdateValidation, updateUser)
     .delete(auth, deleteUser);
 
