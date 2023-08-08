@@ -267,8 +267,11 @@ export const gamesController = () => {
       const { title, developer, price, releaseDate, genres, platforms } =
         req.body;
 
-      const dateObject = new Date(releaseDate);
-      const dateParsed = dateObject.toISOString();
+        const genresArray = genres ? genres : [];
+        const platformsArray = platforms ? platforms : [];
+      
+      const dateObject = !releaseDate ? undefined : new Date(releaseDate);
+      const dateParsed = !dateObject ? undefined : dateObject.toISOString();
 
       const game = await prisma.game.update({
         where: {
@@ -280,7 +283,7 @@ export const gamesController = () => {
           price,
           releaseDate: dateParsed,
           genres: {
-            connectOrCreate: genres.map((genre) => {
+            connectOrCreate: genresArray.map((genre) => {
               return {
                 where: {
                   name: genre,
@@ -292,7 +295,7 @@ export const gamesController = () => {
             }),
           },
           platforms: {
-            connectOrCreate: platforms.map((platform) => {
+            connectOrCreate: platformsArray.map((platform) => {
               return {
                 where: {
                   name: platform,

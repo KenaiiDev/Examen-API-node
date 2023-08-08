@@ -6,7 +6,9 @@ import jwt from "jsonwebtoken";
 export const usersController = () => {
   const createUser = async (req, res, next) => {
     try {
-      const { username, email, password } = req.body;
+      const { username, email, password, birthday } = req.body;
+      const birthdayObject = new Date(birthday);
+      const parsedBirthday = birthdayObject.toISOString();
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -15,6 +17,7 @@ export const usersController = () => {
           username,
           email,
           password: hashedPassword,
+          birthday: parsedBirthday,
         },
       });
       res.status(httpStatus.CREATED).json({
@@ -86,10 +89,17 @@ export const usersController = () => {
 
   const updateUser = async (req, res, next) => {
     try {
-      const { username, email, password } = req.body;
+      const { username, email, password, birthday } = req.body;
       const { id } = req.params;
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(password, salt);
+      const salt = !password ? undefined : await bcrypt.genSalt(10);
+      const hashedPassword = !salt
+        ? undefined
+        : await bcrypt.hash(password, salt);
+
+      const birthdayObject = !birthday ? undefined : new Date(birthday);
+      const parsedBirthday = !birthdayObject
+        ? undefined
+        : birthdayObject.toISOString();
 
       const user = await prisma.user.update({
         where: {
@@ -99,6 +109,7 @@ export const usersController = () => {
           username,
           email,
           password: hashedPassword,
+          birthday: parsedBirthday,
         },
       });
 

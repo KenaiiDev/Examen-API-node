@@ -55,3 +55,9 @@ npm run dev
 ```
 
 Now we will have the server running on the port that we have configured and we will be able to access the endpoints
+
+## API Docs
+
+To access the API documentation you can click on the following link:
+
+- [Postman Docs](https://documenter.getpostman.com/view/29003769/2s9XxzuYB7)
